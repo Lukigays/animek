@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "outputDirectory": "public",
+  "functions": {
+    "api/anime.js": {
+      "maxDuration": 10,
+      "includeFiles": "public/fallback.json"
+    },
+    "api/image.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/home", "destination": "/" },
+    { "source": "/ongoing", "destination": "/" },
+    { "source": "/tamat", "destination": "/" },
+    { "source": "/jadwal", "destination": "/" }
+  ]
+}
