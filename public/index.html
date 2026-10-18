@@ -1,139 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f5f2e9" />
-    <meta name="description" content="LUKYY — katalog anime dengan update episode, status tayang, dan jadwal mingguan." />
-    <title>LUKYY — Anime Index</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <div class="topline">
-      <div class="topline-inner">
-        <div class="topline-left">
-          <span class="live-dot" aria-hidden="true"></span>
-          <span>ANIME INDEX <b>///</b> DATA KATALOG LIVE</span>
-        </div>
-        <div class="topline-right">
-          <span id="date-stamp">MEMUAT TANGGAL...</span>
-          <span class="topline-divider" aria-hidden="true"></span>
-          <a href="https://v2.samehadaku.how/" target="_blank" rel="noopener noreferrer">SOURCE ↗</a>
-        </div>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KelasNime — Nonton Anime Sub Indo</title>
+<meta name="description" content="Nonton anime subtitle Indonesia gratis, update real-time, lengkap dari episode 1 sampai tamat." />
+<link rel="stylesheet" href="/style.css?v=r10" />
+    <link rel="stylesheet" href="/glass.css?v=r10" />
+    <link rel="stylesheet" href="/neo.css?v=r10" />
+</head>
+<body>
+  <div class="app">
+    <nav class="top-nav">
+      <div class="brand" id="brand">
+        <span class="logo">⬡</span>
+        <div><span class="cyan">Kelas</span><span class="pink">Nime</span></div>
       </div>
-    </div>
-
-    <header class="site-header" id="top">
-      <div class="header-inner">
-        <a class="brand" href="/home" data-route="home" aria-label="LUKYY beranda">
-          <span class="brand-mark" aria-hidden="true"><span>LY</span><i></i></span>
-          <span class="brand-copy">
-            <strong>LUKYY</strong>
-            <small>ANIME INDEX / ID</small>
+      <div class="top-actions">
+        <span class="src-badge" id="src-badge">…</span>
+        <button class="me-btn" id="me-btn" title="Profil saya">
+          <span class="me-av" id="me-av">T</span>
+          <span class="me-meta">
+            <span class="me-name" id="me-name">Tamu</span>
+            <span class="me-title" id="me-title">Pemula</span>
+            <span class="me-bar"><i id="me-fill"></i></span>
           </span>
-        </a>
-
-        <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-label="Buka navigasi" aria-expanded="false">
-          <span></span><span></span><span></span>
+          <span class="me-lvl" id="me-lvl">Lvl. 1</span>
         </button>
-
-        <nav class="primary-nav" id="primary-nav" aria-label="Navigasi utama">
-          <a href="/home" data-route="home" class="nav-link">Terbaru <span class="nav-index">01</span></a>
-          <a href="/ongoing" data-route="ongoing" class="nav-link">Ongoing <span class="nav-index">02</span></a>
-          <a href="/tamat" data-route="completed" class="nav-link">Tamat <span class="nav-index">03</span></a>
-          <a href="/jadwal" data-route="schedule" class="nav-link">Jadwal Rilis <span class="nav-index">04</span></a>
-        </nav>
-
-        <div class="header-tools">
-          <form class="search-form" id="search-form" role="search">
-            <label class="sr-only" for="search-input">Cari anime</label>
-            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 5 5"></path></svg>
-            <input id="search-input" name="q" type="search" placeholder="Cari anime..." autocomplete="off" />
-            <button class="search-submit" type="submit" aria-label="Cari">↵</button>
-          </form>
-        </div>
       </div>
-    </header>
+    </nav>
 
-    <main class="page-shell">
-      <section class="intro-board" aria-labelledby="page-title">
-        <div class="intro-main">
-          <div class="eyebrow"><span class="eyebrow-square"></span><span id="page-kicker">LUKYY / FEED 01</span></div>
-          <h1 id="page-title">Rilis terbaru <span class="title-count" id="title-count">16</span></h1>
-          <p id="page-description">Episode paling baru, dikurasi langsung dari katalog anime.</p>
-        </div>
-        <div class="update-stamp" aria-label="Status pembaruan">
-          <div class="stamp-heading"><span class="stamp-spark">✳</span> DATA SOURCE</div>
-          <div class="stamp-number" id="stamp-number">16</div>
-          <div class="stamp-caption" id="stamp-caption">UPDATE EPISODE</div>
-          <div class="stamp-foot"><span class="live-dot" aria-hidden="true"></span><span id="source-mode">MENYAMBUNG...</span></div>
-        </div>
-        <div class="intro-index" aria-hidden="true">LY<br />2026</div>
-      </section>
+    <main id="app"></main>
 
-      <section class="toolbar" id="toolbar" aria-label="Filter dan pengurutan">
-        <div class="day-filter-wrap" id="day-filter-wrap" hidden>
-          <span class="toolbar-label">HARI TAYANG</span>
-          <div class="day-filters" id="day-filters" role="group" aria-label="Filter hari tayang"></div>
-        </div>
-        <div class="toolbar-right">
-          <label class="sort-control" for="sort-select">
-            <span>URUTKAN</span>
-            <select id="sort-select" aria-label="Urutkan anime">
-              <option value="source">Terbaru</option>
-              <option value="rating">Rating tertinggi</option>
-              <option value="az">A–Z</option>
-            </select>
-          </label>
-          <button class="refresh-button" id="refresh-button" type="button" title="Ambil data terbaru">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"></path><path d="M6.1 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 11.9-3"></path></svg>
-            <span>Refresh</span>
-          </button>
-        </div>
-      </section>
+    <nav class="bottom-nav">
+      <button class="nav-item" data-nav="home"><span class="icon"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v9h4.8v-5.4h3.4V19h4.8v-9"/></svg></span><span>Home</span></button>
+      <button class="nav-item" data-nav="schedule"><span class="icon"><svg viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4M8 13.5h3M8 16.5h5"/></svg></span><span>Jadwal Tayang</span></button>
+      <button class="nav-item" data-nav="riwayat"><span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2.4"/></svg></span><span>Riwayat</span></button>
+      <button class="nav-item" data-nav="sub"><span class="icon"><svg viewBox="0 0 24 24"><path d="M7 4.5h10M6 8h12M5 11.5h14"/><rect x="4.5" y="14" width="15" height="6" rx="2"/><path d="m11 15.4 3 1.6-3 1.6z"/></svg></span><span>Subscribe</span></button>
+      <button class="nav-item" data-nav="profil"><span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 19.5c1.3-3.4 4.1-5 7.5-5s6.2 1.6 7.5 5"/></svg></span><span>Profil</span></button>
+    </nav>
+  </div>
 
-      <section class="feed-section" aria-labelledby="section-title">
-        <div class="section-heading">
-          <div class="section-heading-left">
-            <span class="section-kicker" id="section-kicker">01 / LATEST DROPS</span>
-            <h2 id="section-title">Rilis terbaru</h2>
-          </div>
-          <div class="section-heading-right">
-            <span class="record-count"><span class="count-square"></span><strong id="record-count">—</strong> JUDUL</span>
-            <span class="divider-vertical" aria-hidden="true"></span>
-            <span class="data-badge" id="data-badge"><span class="live-dot"></span> LIVE SCRAPE</span>
-          </div>
-        </div>
-
-        <div class="cards-grid" id="cards-grid" aria-live="polite" aria-busy="true"></div>
-        <div class="empty-state" id="empty-state" hidden>
-          <div class="empty-icon">?</div>
-          <h3>Belum ada judul di sini.</h3>
-          <p>Coba pilih filter lain atau cari dengan kata kunci berbeda.</p>
-          <button type="button" id="clear-filters">Reset filter</button>
-        </div>
-        <div class="error-note" id="error-note" hidden></div>
-      </section>
-
-      <section class="source-note" aria-label="Informasi sumber">
-        <div class="source-note-mark">i</div>
-        <div>
-          <strong>METADATA DARI SUMBER PUBLIK</strong>
-          <p>Poster, judul, rating, dan jadwal diambil dari katalog publik. Tautan detail/episode menuju situs sumber; LUKYY tidak meng-host atau menyimpan video.</p>
-        </div>
-        <a href="https://v2.samehadaku.how/" target="_blank" rel="noopener noreferrer" class="source-note-link">KUNJUNGI SUMBER <span>↗</span></a>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <a class="footer-brand" href="/home" data-route="home"><span class="footer-mark">LY</span><span>LUKYY</span></a>
-        <span class="footer-copy">Dibuat untuk menata update anime. Seluruh hak konten milik pemilik masing-masing.</span>
-        <a class="back-top" href="#top" id="back-top">KEMBALI KE ATAS ↑</a>
-      </div>
-    </footer>
-
-    <script src="/app.js" defer></script>
-  </body>
+  <script src="/vendor/hls.min.js"></script>
+  <script src="/app.js?v=r10"></script>
+</body>
 </html>

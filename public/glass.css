@@ -1,0 +1,789 @@
+/* ==========================================================================
+   TEMA GLASSMORPHISM — seluruh UI jadi kaca buram (frosted glass)
+   ========================================================================== */
+
+:root {
+  --g-surface: rgba(255, 255, 255, 0.055);
+  --g-surface-2: rgba(255, 255, 255, 0.09);
+  --g-surface-3: rgba(255, 255, 255, 0.14);
+  --g-border: rgba(255, 255, 255, 0.12);
+  --g-border-2: rgba(255, 255, 255, 0.22);
+  --g-blur: 18px;
+  --g-shadow: 0 10px 34px rgba(0, 0, 0, 0.42);
+  --g-shadow-sm: 0 6px 20px rgba(0, 0, 0, 0.34);
+  --g-glow: 0 0 0 1px rgba(255, 255, 255, 0.07) inset;
+  --g-grad: linear-gradient(135deg, #ff8a3d, #ff4d8d);
+}
+
+/* ------------------------ latar: cahaya di balik kaca ------------------- */
+body {
+  background:
+    radial-gradient(120% 80% at 50% 0%, #10162a 0%, #070a12 55%, #05070d 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: -12vh;
+  left: -12vw;
+  width: 124vw;
+  height: 92vh;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(34vw 34vw at 14% 20%, rgba(255, 138, 61, 0.28), transparent 64%),
+    radial-gradient(38vw 38vw at 86% 14%, rgba(255, 77, 141, 0.26), transparent 62%),
+    radial-gradient(40vw 40vw at 46% 52%, rgba(94, 148, 255, 0.20), transparent 68%),
+    radial-gradient(30vw 30vw at 80% 82%, rgba(0, 214, 190, 0.18), transparent 66%);
+  filter: blur(12px);
+  animation: glassDrift 28s ease-in-out infinite alternate;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.55;
+}
+
+@keyframes glassDrift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to   { transform: translate3d(2%, 2%, 0) scale(1.08); }
+}
+
+/* kaca dasar: pakai kelas ini atau gaya bawah di bawah */
+.app {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  padding-bottom: 104px;
+}
+
+/* ------------------------------ nav atas -------------------------------- */
+.top-nav {
+  background: rgba(12, 16, 28, 0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  border-bottom: 1px solid var(--g-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.src-badge,
+.me-btn {
+  background: var(--g-surface-2);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  box-shadow: var(--g-glow);
+}
+
+.me-btn { border-radius: 999px; padding: 4px 10px 4px 4px; }
+
+/* ----------------------------- nav bawah -------------------------------- */
+.bottom-nav {
+  bottom: 10px;
+  width: calc(100% - 20px);
+  max-width: 460px;
+  height: 64px;
+  background: rgba(12, 16, 28, 0.62);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
+  border: 1px solid var(--g-border);
+  border-radius: 22px;
+  box-shadow: var(--g-shadow);
+  padding: 0 4px;
+}
+
+.nav-item {
+  border-radius: 16px;
+  padding: 6px 2px;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.nav-item:active { transform: scale(0.94); }
+
+.nav-item.active {
+  color: #fff;
+  background: var(--g-surface-3);
+  box-shadow: var(--g-glow);
+}
+
+.nav-item.active .icon {
+  filter: drop-shadow(0 0 8px rgba(255, 138, 61, 0.75));
+}
+
+/* --------------------------- kartu & panel ------------------------------ */
+.card,
+.grid .card,
+.row,
+.rank-row,
+.acc-card,
+.mission,
+.gchat,
+.prof-card,
+.login-box,
+.clan-hero,
+.clan-mine,
+.clan-mini,
+.notice,
+.empty,
+.error-box,
+.skeleton,
+.checkin,
+.server-row {
+  background: var(--g-surface) !important;
+  -webkit-backdrop-filter: blur(var(--g-blur)) saturate(160%);
+  backdrop-filter: blur(var(--g-blur)) saturate(160%);
+  border: 1px solid var(--g-border);
+  border-radius: 18px;
+  box-shadow: var(--g-shadow-sm), var(--g-glow);
+}
+
+.card:hover,
+.grid .card:hover {
+  border-color: var(--g-border-2);
+  background: var(--g-surface-2) !important;
+  transform: translateY(-2px);
+}
+
+.card .thumb,
+.clan-badge,
+.prof-av,
+.acc-av,
+.c-av,
+.chat-av,
+.rank-av {
+  border: 1px solid var(--g-border-2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* ------------------------------ tombol ---------------------------------- */
+.btn {
+  background: var(--g-surface-2);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border-2);
+  border-radius: 14px;
+  box-shadow: var(--g-glow), 0 6px 18px rgba(0, 0, 0, 0.32);
+  font-weight: 700;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn:not(.ghost):not(.pink) {
+  background: var(--g-grad);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(255, 77, 141, 0.32);
+}
+
+.btn.pink {
+  background: linear-gradient(135deg, #ff4d8d, #a855f7);
+  border-color: transparent;
+  color: #fff;
+}
+
+.btn.ghost { color: #dbe3ee; }
+
+.acc-cta,
+.prof-btn,
+.demo-login {
+  background: var(--g-grad);
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(255, 138, 61, 0.34);
+}
+
+/* ---------------------------- bidang isian ------------------------------ */
+.searchbar input,
+.ep-toolbar input,
+.c-input,
+.c-area,
+.ep-picker select,
+.prof-name,
+.searchbar select {
+  background: var(--g-surface-2);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+  color: #e9eef6;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.searchbar input:focus,
+.ep-toolbar input:focus,
+.c-input:focus,
+.c-area:focus,
+.ep-picker select:focus {
+  border-color: rgba(255, 138, 61, 0.65);
+  box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+.searchbar input::placeholder,
+.ep-toolbar input::placeholder { color: rgba(226, 232, 240, 0.5); }
+
+/* ------------------------------- chip ----------------------------------- */
+.chip {
+  background: var(--g-surface-2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--g-border);
+  border-radius: 999px;
+  box-shadow: var(--g-glow);
+  color: #d7e0ec;
+}
+
+.chip.active {
+  background: var(--g-grad);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 8px 22px rgba(255, 77, 141, 0.3);
+}
+
+.ep-chip.active {
+  background: var(--g-grad);
+  border-color: transparent;
+  color: #fff;
+}
+
+.server-chip {
+  background: var(--g-surface-2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--g-border);
+  border-radius: 12px;
+}
+
+/* ------------------------------- pill ----------------------------------- */
+.pill {
+  background: var(--g-surface-2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--g-border);
+  border-radius: 999px;
+  box-shadow: var(--g-glow);
+}
+
+.pill.score { border-color: rgba(255, 200, 80, 0.45); }
+.pill.done { border-color: rgba(74, 222, 128, 0.5); }
+.pill.live { border-color: rgba(248, 113, 113, 0.5); }
+
+/* ----------------------------- komentar --------------------------------- */
+.comment,
+.c-row,
+.chat-row {
+  background: var(--g-surface);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 16px;
+  box-shadow: var(--g-glow);
+}
+
+.c-form,
+.gchat-form {
+  background: var(--g-surface);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--g-border);
+  border-radius: 18px;
+}
+
+.c-note {
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+}
+
+.c-like,
+.c-reply,
+.c-report,
+.c-del,
+.c-flag,
+.c-show {
+  background: var(--g-surface-2);
+  border: 1px solid var(--g-border);
+  border-radius: 999px;
+}
+
+/* --------------------------- daftar episode ----------------------------- */
+.ep-item {
+  background: var(--g-surface);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+  box-shadow: var(--g-glow);
+}
+
+.ep-item:hover {
+  background: var(--g-surface-2);
+  border-color: var(--g-border-2);
+}
+
+.ep-item.watched {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+.ep-item.current {
+  background: rgba(255, 138, 61, 0.16);
+  border-color: rgba(255, 138, 61, 0.55);
+}
+
+.ep-toolbar {
+  background: transparent;
+}
+
+.ep-groups .ep-chip {
+  background: var(--g-surface-2);
+}
+
+/* ----------------------------- bar & meter ------------------------------ */
+.lvl-bar,
+.acc-bar,
+.mission-bar,
+.me-bar {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--g-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lvl-bar i,
+.acc-bar i,
+.mission-bar i,
+.me-bar i {
+  background: var(--g-grad);
+  box-shadow: 0 0 12px rgba(255, 138, 61, 0.55);
+}
+
+/* ------------------------------- hero ----------------------------------- */
+.hero,
+.detail-hero {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--g-border);
+  box-shadow: var(--g-shadow);
+}
+
+.hero .hero-info,
+.detail-head .info {
+  background: linear-gradient(to top, rgba(6, 9, 16, 0.9), rgba(6, 9, 16, 0.15));
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* ------------------------------ pemutar --------------------------------- */
+/* permukaan padat (tanpa backdrop-filter): video bergerak tidak boleh
+   memaksa browser menghitung kabut ulang tiap frame */
+.player-wrap {
+  padding: 8px;
+  background: rgba(10, 14, 26, 0.92);
+  border: 1px solid var(--g-border);
+  border-radius: 18px;
+  box-shadow: var(--g-shadow-sm);
+  isolation: isolate;
+}
+
+.player-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--g-border);
+  transform: translateZ(0); /* lapisan komposit sendiri → gulir & putar mulus */
+  background: #000;
+}
+
+.player-overlay {
+  background: rgba(8, 11, 20, 0.85);
+}
+
+.watch-actions .act {
+  background: var(--g-surface-2);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+  box-shadow: var(--g-glow);
+}
+
+/* ---------------------------- hscroll & baris --------------------------- */
+.hscroll > * {
+  transition: transform 0.18s ease;
+}
+
+.section-head h2 { text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+
+/* ------------------------------ lainnya --------------------------------- */
+.loader {
+  color: #cbd5e1;
+}
+
+.tab,
+.tabs {
+  background: var(--g-surface);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+}
+
+.tab.active {
+  background: var(--g-grad);
+  color: #fff;
+  border-color: transparent;
+}
+
+.lvl,
+.ranks,
+.prof-list,
+.prof-stats,
+.acc-stats {
+  background: transparent;
+}
+
+/* gulir: tipis & transparan */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+/* ---------------------------- panel unduhan ------------------------------ */
+.sheet-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(3, 5, 10, 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  animation: glassFade 0.18s ease;
+}
+
+@keyframes glassFade { from { opacity: 0; } to { opacity: 1; } }
+
+.sheet {
+  width: 100%;
+  max-width: 460px;
+  max-height: 78vh;
+  overflow: hidden auto;
+  padding: 16px 16px 22px;
+  background: rgba(18, 24, 40, 0.72);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  backdrop-filter: blur(26px) saturate(170%);
+  border: 1px solid var(--g-border-2);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.55);
+  animation: glassUp 0.22s ease;
+}
+
+@keyframes glassUp { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sheet-head h3 { font-size: 16px; font-weight: 800; }
+
+.sheet-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--g-border);
+  background: var(--g-surface-2);
+  color: #e6edf3;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.dl-group {
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  border-radius: 16px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.dl-q {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: #ffd7a8;
+  margin-bottom: 8px;
+}
+
+.dl-links { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.dl-link {
+  display: inline-block;
+  padding: 7px 11px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #dbe3ee;
+  background: var(--g-surface-2);
+  border: 1px solid var(--g-border);
+  transition: transform 0.12s, background 0.15s;
+}
+
+.dl-link:active { transform: scale(0.96); }
+
+.dl-link.direct {
+  background: var(--g-grad);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(255, 138, 61, 0.3);
+}
+
+.dl-note {
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(226, 232, 240, 0.65);
+}
+
+/* ------------------------- sisa permukaan jadi kaca ---------------------- */
+.acc-stats > div,
+.ranks .rank-row,
+.chat-row,
+.ep-picker,
+.hscroll .card,
+.grid.two .card {
+  background: var(--g-surface);
+}
+
+.toast,
+#toast {
+  background: rgba(18, 24, 40, 0.8) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--g-border-2);
+  border-radius: 14px;
+}
+
+.detail-actions .btn,
+.watch-nav,
+.prof-list .prof-row {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.mission-bar i,
+.acc-bar i,
+.lvl-bar i { border-radius: 999px; }
+
+/* placeholder gambar juga ikut berkaca */
+.card .thumb,
+.grid .card .thumb,
+img.poster,
+.clan-badge,
+.prof-av,
+.acc-av {
+  background: rgba(255, 255, 255, 0.07) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* ------------------- identitas komentar (akun Google) -------------------- */
+.c-me {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: var(--g-surface-2);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+}
+
+.c-me-main { display: flex; flex-direction: column; line-height: 1.25; }
+.c-me-main b { font-size: 13px; }
+.c-me .c-lvl { font-size: 10.5px; color: #ffd7a8; }
+
+.c-login {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(226, 232, 240, 0.8);
+  background: var(--g-surface-2);
+  border: 1px solid var(--g-border);
+  border-radius: 14px;
+}
+
+.c-login .btn { flex: none; padding: 8px 14px; font-size: 12px; }
+.c-input:disabled { opacity: 0.55; }
+
+/* ------------------------- ucapan naik level ----------------------------- */
+.levelup {
+  position: fixed;
+  left: 50%;
+  top: 74px;
+  z-index: 300;
+  transform: translate(-50%, -14px);
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 22px;
+  border-radius: 18px;
+  background: rgba(24, 30, 48, 0.82);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
+  border: 1px solid var(--g-border-2);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 26px rgba(255, 138, 61, 0.28);
+  transition: opacity 0.25s, transform 0.25s;
+  text-align: center;
+}
+
+.levelup.show { opacity: 1; transform: translate(-50%, 0); }
+.levelup b {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  background: var(--g-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.levelup span { font-size: 11.5px; color: #dbe3ee; }
+
+/* ======================= UI BERSIH & TIDAK NGELEG =======================
+   Kaca (blur) tetap dipakai di permukaan utama, tapi dimatikan pada elemen
+   yang diulang puluhan kali (kartu, chip, baris episode) karena di situlah
+   browser kehilangan frame saat digulir.
+   ---------------------------------------------------------------------- */
+:root {
+  --g-blur: 14px;
+}
+@media (max-width: 640px) {
+  :root {
+    --g-blur: 10px;
+  }
+}
+
+.card,
+.card .thumb,
+.ep-item,
+.chip,
+.dl-link,
+.rank-row,
+.badge,
+.c-item,
+.ep-group,
+.grid > *,
+.hscroll > * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* pengganti kaca: latar padat semi-transparan, tetap senada */
+.card,
+.ep-item,
+.chip,
+.dl-link,
+.rank-row,
+.c-item {
+  background: rgba(19, 25, 41, 0.58);
+}
+
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+.grid,
+.hscroll {
+  contain: layout paint;
+}
+
+.bottom-nav,
+.top-nav {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ikon navigasi: garis (stroke) mengikuti warna teks, tajam di semua perangkat */
+.bottom-nav .icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+}
+.bottom-nav .nav-item.active .icon svg {
+  stroke-width: 2.3;
+}
+
+/* ---------- mode nonton: ringan & tanpa kabut ----------
+   Saat video berjalan, kabut (backdrop-filter) dan animasi apa pun di elemen
+   yang menimpa/melintasi video memaksa browser menggambar ulang tiap frame ->
+   itulah biang patah-patah di posisi tegak (di layar penuh halaman tidak
+   digambar, jadi terasa aman). Di halaman nonton semuanya dimatikan. */
+body.watch * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body.watch .top-nav,
+body.watch .topbar,
+body.watch .bottom-nav { background: rgba(8, 11, 20, 0.94) !important; }
+body.watch .server-row { background: rgba(13, 18, 32, 0.94) !important; }
+
+/* latar kaca bergerak + cincin level berdenyut (animasi box-shadow) = gambar
+   ulang tanpa henti; di halaman nonton: mati total */
+body.watch::before { visibility: hidden !important; }
+body.watch::after { display: none !important; }
+body.watch,
+body.watch *,
+body.watch *::before,
+body.watch *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* pemutar: lapisan compositing sendiri + potong gambar di area ini saja */
+body.watch .player-wrap > div,
+body.watch .player-wrap iframe { transform: translateZ(0); backface-visibility: hidden; }
+body.watch .player-wrap,
+body.watch .player-frame { contain: paint; }
+
+/* bagian bawah pemutar: lewati proses gambar selama di luar layar */
+body.watch #watch-extra,
+body.watch #watch-download,
+body.watch #watch-comments {
+  content-visibility: auto;
+  contain-intrinsic-size: 420px;
+}

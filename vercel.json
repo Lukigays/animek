@@ -1,19 +1,13 @@
 {
   "version": 2,
-  "outputDirectory": "public",
   "functions": {
-    "api/anime.js": {
-      "maxDuration": 10,
-      "includeFiles": "public/fallback.json"
-    },
-    "api/image.js": {
-      "maxDuration": 10
+    "api/index.js": {
+      "maxDuration": 30,
+      "memory": 1024,
+      "includeFiles": "public/**"
     }
   },
   "rewrites": [
-    { "source": "/home", "destination": "/" },
-    { "source": "/ongoing", "destination": "/" },
-    { "source": "/tamat", "destination": "/" },
-    { "source": "/jadwal", "destination": "/" }
+    { "source": "/(.*)", "destination": "/api/index" }
   ]
 }

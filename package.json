@@ -1,16 +1,26 @@
 {
-  "name": "lukyy-anime-index",
+  "name": "kelasnime",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "engines": {
-    "node": ">=20"
-  },
+  "description": "KelasNime — anime Sub Indo dari Samehadaku + Otakudesu, layout katalog neobrutalism, metadata, dan arsip unduhan terpisah.",
+  "main": "app.js",
   "scripts": {
+    "start": "node server.js",
     "dev": "node server.js",
-    "start": "node server.js"
+    "serve": "node server.js",
+    "test": "node test/samehadaku.test.js && node test/otakudesu.test.js",
+    "zip": "cd .. && zip -r kelasnime-deploy.zip kelasnime -x 'kelasnime/node_modules/*' 'kelasnime/.git/*' 'kelasnime/test/shots/*' 'kelasnime/test/*.png' 'kelasnime/test/fixtures/*' 'kelasnime/.vercel/*' 'kelasnime/data/*' 'kelasnime/public/media/uji.mp4'"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
-    "cheerio": "^1.1.2"
+    "cheerio": "^1.2.0",
+    "express": "^5.2.1",
+    "serverless-http": "^3.2.0"
+  },
+  "optionalDependencies": {
+    "mongodb": "^7.0.0",
+    "google-auth-library": "^10.0.0"
   }
 }
