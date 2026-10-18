@@ -86,16 +86,9 @@ dan buka `http://<ip-laptop>:3000`.
 - **Tombol aksi di halaman nonton**: ❤️ **Suka** (dihitung server), 🔗 **Bagikan**
   (native share / salin tautan), **Autoplay ON/OFF** (lanjut episode berikutnya otomatis),
   dan hitung **"N kali diputar"**
-- **Tata letak beranda ala Wibuku** — persis urutannya: **kartu akun** (avatar berbingkai, nama + ID,
-  `Lvl. X`, bar EXP, tombol klaim) → **kartu misi durasi nonton** ("Tambah lagi yuk durasinya…") →
-  **TOP NAKAMA** (peringkat EXP, medali, gelar, clan) → kolom **Cari Anime Di Sini** →
-  **Global Chat** ("Lihat lainnya >"). Tidak ada deretan kartu anime di beranda — semua
-  penjelajahan ada di tab **Terbaru** (lanjut nonton, genre, rilisan terbaru + halaman,
-  sedang tayang, populer, movie)
-- **Navigasi bawah 5 tombol**: `Home · Terbaru · Jadwal · Chat · Profil`
-  (Clan dan genre tetap bisa diakses dari halaman Profil / tab Terbaru)
-- **Global Chat**: obrolan semua pengunjung (5 pesan teratas di beranda, halaman penuh di
-  `#/chat`) — sudah lewat moderasi yang sama dengan komentar, plus lencana level pengirim
+- **Beranda katalog minimal** — tab `Terbaru · Ongoing · Tamat · Jadwal Rilis`, judul `Rilis Terbaru`, lalu grid poster 16 judul per halaman. Tidak menampilkan Global Chat, TOP NAKAMA, kartu akun/misi, rekomendasi, atau bagian sosial.
+- **Skin neobrutalism** — kertas terang berpola titik, garis tebal hitam, aksen warna cerah dan bayangan keras; susunan katalog terinspirasi DansNime tanpa memakai aset/stylesheet-nya.
+- **Navigasi bawah**: `Home · Jadwal Tayang · Riwayat · Subscribe · Profil`.
 - Pencarian: hasil yang **bisa distreaming** dipisah dari hasil **info saja** (metadata)
 - Detail anime: gabungan data sumber + Jikan/AniList (skor, studio, sinopsis, status), daftar episode lengkap
 - Nonton: pemutar dengan **banyak server anonim** (`Server 1`, `Server 2 · 720p`, …), indikator
@@ -138,7 +131,9 @@ test/smoke.js             uji render tiap view pakai jsdom
 | Endpoint | Keterangan |
 |---|---|
 | `GET /api/status` | mirror aktif & jumlah cache |
-| `GET /api/home` | beranda: latest + airing + popular + movies + genres |
+| `GET /api/latest?page=1` | katalog terbaru gabungan sumber |
+| `GET /api/catalog?status=ongoing&page=1` | katalog ongoing |
+| `GET /api/catalog?status=complete&page=1` | katalog tamat |
 | `GET /api/latest?page=1` | rilisan terbaru gabungan Samehadaku + Otakudesu |
 | `GET /api/catalog?status=complete&page=1` | katalog anime tamat Samehadaku |
 | `GET /api/search?q=frieren` | cari di kedua sumber + `info` metadata anime |
@@ -180,7 +175,6 @@ Browser tidak pernah menerima URL asli. Yang dikirim ke frontend cuma token acak
 | `GET /api/views?slug=` | total putar semua episode satu judul (untuk badge di detail) |
 | `GET /api/clans`, `GET /api/clan/:tag` | daftar clan & detail + anggota |
 | `POST /api/clan`, `POST /api/clan/join`, `POST /api/clan/leave` | kelola clan (perlu login) |
-| `GET /api/leaderboard` | 10 pengguna dengan EXP tertinggi |
 
 **Penyimpanan** (`src/store.js`) punya dua mode, tanpa konfigurasi wajib:
 
@@ -306,11 +300,8 @@ yang disimpan di server ini. Gunakan sesuai hukum yang berlaku di negara kamu.
 
 ## Navigasi & perilaku aplikasi
 
-- **Navigasi bawah baru** (seperti referensi): **Home · Jadwal Tayang · Riwayat ·
-  Subscribe · Profil**, dengan ikon garis SVG yang tajam di semua perangkat.
-- **Beranda**: setelah Global Chat kini ada **Rekomendasi Anime** lalu
-  **Anime Terbaru**; dimuat menyusul supaya halaman langsung tampil dan tidak patah-patah.
-- **Sumber anime tunggal**: Otakudesu dipakai sebagai satu-satunya scraper anime aktif.
+- **Beranda**: katalog sederhana ala DansNime—tanpa Global Chat, TOP NAKAMA, kartu akun/misi, maupun blok rekomendasi.
+- **Tema neobrutalism**: bentuk tegas dan hard-shadow menggantikan kaca blur.
 - **Lapisan cadangan**: hasil terakhir yang pernah berhasil disimpan; bila semua sumber
   sedang tumbang, data itulah yang dikirim (dengan catatan halus "menampilkan data
   terakhir") — tidak ada lagi layar kegagalan total.

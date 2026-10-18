@@ -234,7 +234,7 @@ dihitung ulang dari EXP, jadi tidak perlu kolom tambahan.
 | Gejala | Penyebab & solusi |
 |---|---|
 | Halaman putih / 500 “Frontend tidak ditemukan” | Folder `public/` tidak ikut ter-deploy. Di Vercel pastikan `vercel.json` (includeFiles) terbaca; di Netlify pastikan `publish = "public"`. |
-| `/api/home` lama atau error `BLOCKED` | Salah satu sumber membatasi permintaan; aplikasi akan beralih ke sumber lain. Periksa `SAMEHADAKU_BASE` dan `OTAKUDESU_BASE`. |
+| `/api/latest` lama atau error `BLOCKED` | Salah satu sumber membatasi permintaan; aplikasi menggabungkan data dari sumber lain. Periksa `SAMEHADAKU_BASE` dan `OTAKUDESU_BASE`. |
 | Semua metadata dari AniList | Jikan/MAL lagi gangguan (404/504). Aplikasi otomatis pakai AniList; akan balik ke Jikan sendiri saat pulih. |
 | Video tidak muncul | Ganti server di bawah pemutar (indikator hijau = merespon). Server embed butuh koneksi browser ke hostnya (Blogspot/Mega/Filedon). |
 | Error saat scraping walau di lokal jalan | Host tidak punya binary `curl`. Di Docker sudah diinstal; di VPS `sudo apt install curl`. |

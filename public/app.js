@@ -298,7 +298,6 @@ async function demoLogin() {
 // segarkan tampilan level/EXP di semua tempat (kartu akun, header, profil)
 function paintLevel() {
   paintHeader();
-  document.querySelectorAll('.acc-name, .acc-card').forEach(() => {});
   const fill = document.querySelector('.acc-bar i');
   const teks = document.querySelector('.acc-lvl');
   const L = levelOf(ME?.exp || 0);
@@ -336,7 +335,7 @@ async function checkIn() {
     paintLevel();
 
     // tombol klaim langsung berubah tanpa perlu refresh
-    ['home-checkin', 'checkin'].forEach((id) => {
+    ['checkin'].forEach((id) => {
       const b = document.getElementById(id);
       if (!b) return;
       b.textContent = '✓ Hari ini';
@@ -1169,7 +1168,7 @@ function bindSearch() {
   });
 }
 
-/* -------------------- kartu akun, misi nonton, global chat ---------------- */
+/* ------------------------------ utilitas akun ---------------------------- */
 function userIdNum() {
   const seed = ME?.sub || localStorage.getItem('kelasnime:name') || 'tamu';
   let h = 0;
@@ -1178,53 +1177,12 @@ function userIdNum() {
 }
 
 // total jam nonton (1 episode ≈ 24 menit)
-function watchHours() {
-  const n = getHistory().length || 0;
-  return (n * 24) / 60;
-}
-const fmtJam = (h) => (Math.round(h * 100) / 100).toFixed(2).replace('.', ',');
-
-function accCard() {
-  const u = ME || { name: 'Tamu', picture: '', exp: 0, clan: '', streak: 0 };
-  const L = levelOf(u.exp || 0);
-  const av = avatarOf(u.name || 'Tamu');
-  const avatarHTML = u.picture ? `<img src="${esc(u.picture)}" alt="" />` : esc(av.initial);
-  const jam = fmtJam(watchHours());
-  const today = new Date().toISOString().slice(0, 10);
-  const sudah = ME?.sub ? ME.lastDay === today : localStorage.getItem('kelasnime:daily') === today;
-  return `<div class="acc-card">
-    <div class="acc-top">
-      <div class="acc-av av-f${frameOf(L.level)}" style="background:${av.color}22;color:${av.color}">${avatarHTML}</div>
-      <div class="acc-main">
-        <div class="acc-name">${esc(u.name || 'Tamu')} <span class="acc-id">#${userIdNum()}</span></div>
-        <div class="acc-lvl"><b>Lvl. ${L.level}</b><span>${L.current}/${L.need} EXP</span></div>
-        <div class="acc-bar"><i style="width:${L.percent}%"></i></div>
-      </div>
-      ${ME?.sub ? `<button class="acc-cta ${sudah ? 'off' : ''}" id="home-checkin" ${sudah ? 'disabled' : ''}>${sudah ? '✓ Hari ini' : 'Klaim'}</button>` : `<button class="acc-cta" data-nav="profil">Masuk</button>`}
-    </div>
-    <div class="acc-stats">
-      <div><b>${jam}</b><span>Jam nonton</span></div>
-      <div><b>${L.exp}</b><span>Total EXP</span></div>
-      <div><b>${u.clan ? esc(u.clan) : '-'}</b><span>Clan</span></div>
-      <div><b>${u.streak || 0}</b><span>Streak</span></div>
-    </div>
-  </div>`;
-}
-
-function missionCard() {
-  const jam = watchHours();
-  const target = Math.max(5, Math.ceil((jam + 0.01) / 5) * 5); // target kelipatan 5 jam berikutnya
-  const pct = Math.min(100, Math.round((jam / target) * 100));
-  const sisa = Math.max(0, target - jam);
-  return `<div class="mission">
-    <div class="mission-ic">⏱</div>
-    <div class="mission-main">
-      <b>Tambah lagi yuk durasinya</b>
-      <span>${fmtJam(sisa)} Jam lagi — Biar makin puas nontonnya</span>
-      <div class="mission-bar"><i style="width:${pct}%"></i></div>
-    </div>
-    <div class="mission-go">${fmtJam(jam)}/${target} Jam</div>
-  </div>`;
+// Nomor akun dipakai di ringkasan profil, bukan sebagai kartu tambahan di beranda.
+function userIdNum() {
+  const seed = ME?.sub || localStorage.getItem('kelasnime:name') || 'tamu';
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  return String(1000000 + (h % 9000000));
 }
 
 /* komentar per episode ---------------------------------------------------- */
@@ -1257,83 +1215,6 @@ function epGroupChips(asc) {
   return chips.join('');
 }
 
-function chatRow(c) {
-  const av = avatarOf(c.name);
-  const avHTML = c.picture ? `<img src="${esc(c.picture)}" alt="" />` : esc(av.initial);
-  if (c.hidden) {
-    return `<div class="chat-row muted"><span class="chat-av">⚑</span>
-      <span class="chat-main"><b>Pesan disembunyikan</b><small>Karena banyak laporan.</small></span></div>`;
-  }
-  return `<div class="chat-row">
-    <span class="chat-av av-f${c.ulevel ? frameOf(c.ulevel) : 0}" style="background:${av.color}22;color:${av.color}">${avHTML}</span>
-    <span class="chat-main"><b>${esc(c.name)}${c.ulevel ? `<i class="c-lvl">Lvl. ${c.ulevel}</i>` : ''}</b><small>${esc(c.text)}</small></span>
-    <span class="chat-time">${esc(timeAgo(c.at))}</span>
-  </div>`;
-}
-
-async function globalChatCard() {
-  let items = [];
-  try {
-    items = (await api('/api/comments?key=global', { ttl: 15 * 1000 })).items || [];
-  } catch {
-    items = [];
-  }
-  const rows = items.slice(-5).reverse().map(chatRow).join('');
-  return `<div class="section">
-    <div class="section-head"><h2>Global Chat</h2><span class="more" data-nav="chat">Lihat lainnya &gt;</span></div>
-    <div class="gchat" id="gchat">${rows || '<div class="empty">Belum ada pesan. Sapa dulu yuk!</div>'}</div>
-    <div class="gchat-form">
-      <input id="gchat-input" placeholder="Tulis pesan..." maxlength="300" />
-      <button class="btn" id="gchat-send">Kirim</button>
-    </div>
-    <div class="c-note pad">Jangan lupa untuk membuat komentar yang sopan dan santun dan mengikuti Aturan Komunitas kami</div>
-  </div>`;
-}
-
-function bindGlobalChat() {
-  const input = document.getElementById('gchat-input');
-  const send = document.getElementById('gchat-send');
-  const run = async () => {
-    const text = (input?.value || '').trim();
-    if (!text) return;
-    try {
-      const r = await fetch('/api/comments', {
-        method: 'POST',
-        headers: authHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ key: 'global', text, name: ME?.name || localStorage.getItem('kelasnime:name') || 'Tamu' }),
-      });
-      const j = await r.json();
-      if (!j.ok) throw new Error(j.error || 'gagal');
-      input.value = '';
-      addExp(5, 'chat');
-      const box = document.getElementById('gchat');
-      if (box) {
-        box.insertAdjacentHTML('afterbegin', chatRow(j.item));
-        while (box.children.length > 5) box.lastElementChild.remove();
-      }
-      toast('Pesan terkirim');
-    } catch (e) {
-      toast(e.message);
-    }
-  };
-  send?.addEventListener('click', run);
-  input?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') run();
-  });
-}
-
-/* ------------------------------- GLOBAL CHAT ----------------------------- */
-async function viewChat() {
-  app.innerHTML = `
-    <div class="section">
-      <div class="section-head"><h2>Global Chat</h2></div>
-    </div>
-    ${commentsSection('global', 'Global Chat')}
-    <div style="padding:0 16px 20px"><button class="btn ghost" data-nav="home">‹ Kembali ke beranda</button></div>`;
-  await loadComments('global');
-  bindComments('global', 'Global Chat');
-}
-
 /* --------------------------------- HOME ---------------------------------- */
 function catalogNav(active = 'home') {
   const tabs = [
@@ -1359,118 +1240,31 @@ function releaseCard(item) {
     </div>
   </article>`;
 }
-async function viewHome() {
-  app.innerHTML = `${searchBar()}<div class="loader">Memuat beranda…</div>`;
+async function viewHome(page = 1) {
+  app.innerHTML = `${searchBar()}${catalogNav('home')}<div class="loader">Memuat rilisan terbaru…</div>`;
   bindSearch();
-  let data;
+  let response;
   try {
-    data = await api('/api/home', { ttl: 90 * 1000 });
+    response = await api(`/api/latest?page=${page}`, { ttl: 90 * 1000 });
   } catch (err) {
-    app.innerHTML = `${searchBar()}<div class="error-box">Gagal memuat beranda: ${esc(err.message)}</div>`;
+    app.innerHTML = `${searchBar()}${catalogNav('home')}<div class="error-box">${esc(err.message)}</div>`;
     bindSearch();
     return;
   }
-
-  const heroItem = data.airing?.[0] || data.popular?.[0] || null;
-  const hero = heroItem
-    ? `<div class="hero" data-go="meta" data-id="${heroItem.id}"
-         style="background-image:url('${esc(heroItem.banner || heroItem.poster)}')">
-          <div class="hero-info">
-            <div class="hero-title">${esc(heroItem.title)}</div>
-            <div class="hero-meta">
-              <span>★ ${heroItem.score ?? '-'}</span><span>${esc(noTV(heroItem.type))}</span>
-              <span>${esc(heroItem.status || '')}</span><span>${heroItem.episodes ? heroItem.episodes + ' ep' : ''}</span>
-            </div>
-            <div class="hero-cta">
-              <button class="btn ghost" data-hero="info" data-id="${heroItem.id}">Lihat Info</button>
-              <button class="btn" data-hero="tonton" data-title="${esc(heroItem.title)}">▶ Tonton</button>
-            </div>
-          </div>
-       </div>`
-    : '';
-
-  const hist = getHistory().slice(0, 8);
-  const histSection = hist.length
-    ? section(
-        'Lanjutkan Nonton',
-        hscroll(
-          hist.map((x) => ({
-            title: x.title,
-            slug: x.slug,
-            poster: x.poster,
-            status: `Lanjut EP ${x.number}`,
-            score: '',
-          })),
-          streamCard
-        )
-      )
-    : '';
-
-  const board = await api('/api/leaderboard', { ttl: 60 * 1000 }).catch(() => ({ items: [] }));
-  const rankList = (board.items || []).slice(0, 5);
-  const rankSection = rankList.length
-    ? section(
-        'TOP NAKAMA',
-        `<div class="ranks">${rankList
-          .map((u, i) => {
-            const av = avatarOf(u.name);
-            const L = levelOf(u.exp || 0);
-            const medal = ['🥇', '🥈', '🥉'][i] || '';
-            return `<div class="rank-row ${i === 0 ? 'top' : ''}">
-              <span class="rank-no">${medal || i + 1}</span>
-              <span class="rank-av av-f${frameOf(L.level)}" style="background:${av.color}22;color:${av.color}">${
-              u.picture ? `<img src="${esc(u.picture)}" alt="" />` : esc(av.initial)
-            }</span>
-              <span class="rank-main"><b>${esc(u.name)}</b><small><span class="rank-title">${esc(
-              u.title || titleOf(L.level)
-            )}</span> · Lvl. ${L.level} · ${L.exp} EXP${u.clan ? ' · ' + esc(u.clan) : ''}</small></span>
-              <span class="rank-exp">${L.exp}</span>
-            </div>`;
-          })
-          .join('')}</div>`
-      )
-    : section(
-        'TOP NAKAMA',
-        `<div class="notice">Belum ada yang masuk peringkat. ${
-          ME?.sub ? 'Kumpulkan EXP dengan nonton & berkomentar!' : 'Masuk dengan Google untuk ikut papan peringkat.'
-        }</div>`
-      );
-
-  const genreChips = data.genres?.length
-    ? `<div class="section"><div class="section-head"><h2>Jelajahi Genre</h2></div>
-        <div class="chips">${data.genres
-          .slice(0, 18)
-          .map((g) => `<button class="chip" data-go="genre" data-id="${g.id}" data-name="${esc(g.name)}">${esc(g.name)}</button>`)
-          .join('')}</div></div>`
-    : '';
-
-  const chatCard = await globalChatCard();
-
-  const latestItems = (data.latest || []).slice(0, 16);
-  app.innerHTML = `
-    ${searchBar()}
-    ${catalogNav('home')}
-    <section class="release-section">
-      <div class="release-heading"><div><p class="release-kicker">Katalog anime</p><h1>Rilis Terbaru <span>(${latestItems.length})</span></h1></div><button class="neo-link" data-nav="ongoing">Lihat semua ↗</button></div>
-      ${latestItems.length
-        ? `<div class="release-grid">${latestItems.slice(0, 24).map(releaseCard).join('')}</div>`
-        : `<div class="notice">Daftar rilisan belum tersedia. Coba muat ulang sebentar lagi.</div>`}
-    </section>
-    ${histSection}
-    ${accCard()}
-    ${rankSection}
-    ${chatCard}
-    <div id="home-rekom"></div>`;
-
+  const items = (response.data || response.items || []).slice(0, 16);
+  app.innerHTML = `${searchBar()}${catalogNav('home')}
+    <div class="release-heading"><div><p class="release-kicker"># Katalog anime</p><h1>Rilis Terbaru <span>(${items.length})</span></h1></div>
+      <button class="neo-link" id="catalog-refresh" type="button" title="Muat ulang">↻ Muat ulang</button>
+    </div>
+    ${items.length ? `<div class="release-grid">${items.map(releaseCard).join('')}</div>` : `<div class="notice">Belum ada rilisan untuk ditampilkan.</div>`}
+    <div class="catalog-pagination">${page > 1 ? `<button class="neo-link" id="catalog-prev">← Sebelumnya</button>` : ''}<button class="neo-link" id="catalog-next">Selanjutnya →</button></div>`;
   bindSearch();
-  bindGlobalChat();
-
-  // bagian bawah dimuat belakangan supaya beranda langsung tampil & tidak patah-patah
-  setTimeout(() => isiBeranda(), 30);
-  document.getElementById('home-checkin')?.addEventListener('click', checkIn);
-
-  badge.textContent = 'real-time';
-  badge.title = 'Data diambil langsung dari sumber saat ini';
+  document.getElementById('catalog-refresh')?.addEventListener('click', () => {
+    cacheStore.delete(`/api/latest?page=${page}`);
+    viewHome(page);
+  });
+  document.getElementById('catalog-prev')?.addEventListener('click', () => viewHome(page - 1));
+  document.getElementById('catalog-next')?.addEventListener('click', () => viewHome(page + 1));
 }
 
 /* ------------------------------ KATALOG STATUS --------------------------- */
@@ -1495,56 +1289,7 @@ async function viewCatalog(status = 'ongoing', page = 1) {
   }
 }
 
-/* ------------------------------ ONGOING/MOVIE ---------------------------- */
-async function viewOngoing(page = 1) {
-  app.innerHTML = `${searchBar()}<div class="loader">Memuat rilisan terbaru…</div>`;
-  bindSearch();
-  let home = null;
-  let latest = null;
-  try {
-    [home, latest] = await Promise.all([
-      api('/api/home', { ttl: 60 * 1000 }).catch(() => null),
-      api(`/api/latest?page=${page}`, { ttl: 60 * 1000 }),
-    ]);
-  } catch (err) {
-    app.innerHTML = `${searchBar()}<div class="error-box">${esc(err.message)}</div>`;
-    bindSearch();
-    return;
-  }
-
-  const hist = getHistory().slice(0, 8);
-  const histSection = hist.length
-    ? section(
-        'Lanjutkan Nonton',
-        hscroll(hist.map((x) => ({ title: x.title, slug: x.slug, poster: x.poster, status: `Lanjut EP ${x.number}`, score: '' })), streamCard)
-      )
-    : '';
-
-  const genreChips = home?.genres?.length
-    ? `<div class="section"><div class="section-head"><h2>Jelajahi Genre</h2></div>
-        <div class="chips">${home.genres.slice(0, 18).map((g) => `<button class="chip" data-go="genre" data-id="${g.id}" data-name="${esc(g.name)}">${esc(g.name)}</button>`).join('')}</div></div>`
-    : '';
-
-  app.innerHTML = `
-    ${searchBar()}
-    ${catalogNav('ongoing')}
-    <div class="release-heading"><div><p class="release-kicker">Jelajahi</p><h1>Anime Terbaru <span>(${(latest?.data || []).length})</span></h1></div></div>
-    ${histSection}
-    ${genreChips}
-    <div class="release-grid" style="margin:4px 16px 0">${(latest?.data || []).map(releaseCard).join('')}</div>
-    <div style="display:flex;gap:10px;padding:16px">
-      ${page > 1 ? `<button class="btn ghost" id="prev-page">‹ Sebelumnya</button>` : ''}
-      <button class="btn" id="next-page">Selanjutnya ›</button>
-    </div>
-    ${home?.airing?.length ? section('Sedang Tayang', hscroll(home.airing, metaCard)) : ''}
-    ${home?.popular?.length ? section('Paling Populer', `<div class="grid">${home.popular.slice(0, 9).map(metaCard).join('')}</div>`) : ''}
-    ${home?.movies?.length ? section('Movie', hscroll(home.movies, metaCard), 'movies') : ''}`;
-
-  bindSearch();
-  $('#next-page')?.addEventListener('click', () => viewOngoing(page + 1));
-  $('#prev-page')?.addEventListener('click', () => viewOngoing(page - 1));
-}
-
+/* ------------------------------ Movie catalog ---------------------------- */
 async function viewMovies() {
   app.innerHTML = `<div class="loader">Memuat anime movie…</div>`;
   try {
@@ -2148,36 +1893,6 @@ async function isiUnduhan(params, data) {
 
 /* ------------------------------ BERANDA BAWAH ------------------------------ */
 // Rekomendasi + rilisan terbaru: diambil setelah halaman tampil biar mulus
-async function isiBeranda() {
-  const rekom = document.getElementById('home-rekom');
-  const terbaru = document.getElementById('home-terbaru');
-  if (!rekom) return;
-
-  rekom.innerHTML = `<div class="section-head"><h2>Rekomendasi Anime</h2></div><div class="loader">Memuat…</div>`;
-  if (terbaru) terbaru.innerHTML = `<div class="section-head"><h2>Anime Terbaru</h2></div><div class="loader">Memuat…</div>`;
-
-  // ambil sekali dari /api/home (sama dengan permintaan beranda → ikut cache),
-  // supaya dua bagian bawah ini tidak bergantung pada permintaan kedua
-  const home = await api('/api/home', { ttl: 90 * 1000 }).catch(() => null);
-  const rekomHasil = [...(home?.airing || []), ...(home?.popular || []), ...(home?.upcoming || [])]
-    .filter((x, i, arr) => x && arr.findIndex((y) => y.id === x.id) === i)
-    .slice(0, 12);
-  rekom.innerHTML = rekomHasil.length
-    ? section('Rekomendasi Anime', hscroll(rekomHasil, metaCard))
-    : `<div class="section-head"><h2>Rekomendasi Anime</h2></div><div class="notice">Rekomendasi belum tersedia, coba muat ulang.</div>`;
-
-  let terbaruHasil = home || null;
-  let items = terbaruHasil?.latest || [];
-  if (!items.length) {
-    // cadangan: minta langsung rilisan terbaru (dengan lapisan cadangan server)
-    terbaruHasil = await api('/api/latest?page=1', { ttl: 2 * 60 * 1000 }).catch(() => null);
-    items = terbaruHasil?.data || terbaruHasil?.items || [];
-  }
-  if (terbaru) terbaru.innerHTML = items.length
-    ? catatanStale(terbaruHasil) + section('Anime Terbaru', hscroll(items.slice(0, 12), streamCard))
-    : `<div class="section-head"><h2>Anime Terbaru</h2></div><div class="notice">Rilisan terbaru belum tersedia, coba muat ulang.</div>`;
-}
-
 /* --------------------------- RIWAYAT & SUBSCRIBE --------------------------- */
 async function viewRiwayat() {
   const hist = getHistory();
@@ -2749,7 +2464,7 @@ async function route() {
 
   switch (view) {
     case 'home':
-      return viewHome();
+      return viewHome(Number(params.page) || 1);
     case 'riwayat':
       return viewRiwayat();
     case 'sub':
@@ -2775,8 +2490,6 @@ async function route() {
       return viewProfile(params.tab || 'komentar');
     case 'clan':
       return viewClan(params.tag || '');
-    case 'chat':
-      return viewChat();
     case 'watch':
       return viewWatch(params);
     default:

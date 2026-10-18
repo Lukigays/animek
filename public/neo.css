@@ -138,20 +138,17 @@ body::before, body::after { display: none !important; content: none !important; 
 .card .sub { color: #55524a !important; font-weight: 650; }
 .card .badge { border: 1.5px solid var(--neo-ink); border-radius: 4px !important; box-shadow: 2px 2px 0 var(--neo-ink); }
 .hero { border: 3px solid var(--neo-ink) !important; border-radius: 9px !important; box-shadow: var(--neo-shadow) !important; }
-.acc-card, .mission, .gchat, .ranks, .clan-hero, .detail-hero, .sheet, .notice, .empty, .prof-row, .ep-item, .ep-chip, .server-chip, .watch-head, #watch-download {
+.clan-hero, .detail-hero, .sheet, .notice, .empty, .prof-row, .ep-item, .ep-chip, .server-chip, .watch-head, #watch-download {
   background: var(--neo-paper) !important; color: var(--neo-ink) !important;
   border: 2px solid var(--neo-ink) !important; border-radius: 8px !important;
   box-shadow: var(--neo-shadow-sm) !important; backdrop-filter: none !important;
 }
-.acc-card { background: var(--neo-pink) !important; }
-.ranks, .gchat { background: var(--neo-paper) !important; }
-.rank-row.top { background: var(--neo-yellow) !important; }
 .acc-cta, .checkin-top .btn, .demo-login { color: var(--neo-ink) !important; background: var(--neo-yellow) !important; border: 2px solid var(--neo-ink) !important; border-radius: 7px !important; box-shadow: var(--neo-shadow-sm) !important; }
 .acc-bar { background: #fff !important; border: 1px solid var(--neo-ink); }
 .acc-bar i { background: var(--neo-blue) !important; }
 .chat-main small, .rank-main small, .rank-main b, .acc-name, .acc-stats b, .acc-stats span { color: var(--neo-ink) !important; }
-.gchat-form input, input, textarea, select { color: var(--neo-ink); }
-.gchat-form input, textarea { background: var(--neo-paper) !important; border: 2px solid var(--neo-ink) !important; border-radius: 7px !important; box-shadow: 2px 2px 0 var(--neo-ink); }
+input, textarea, select { color: var(--neo-ink); }
+textarea { background: var(--neo-paper) !important; border: 2px solid var(--neo-ink) !important; border-radius: 7px !important; box-shadow: 2px 2px 0 var(--neo-ink); }
 .chip { background: var(--neo-paper) !important; }
 .chip.active { background: var(--neo-yellow) !important; }
 .pill, .badge, .ep-num { border: 1.5px solid var(--neo-ink) !important; border-radius: 5px !important; color: var(--neo-ink) !important; }

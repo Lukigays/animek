@@ -1,4 +1,4 @@
-// Regresi akhir: semua permintaan sebelumnya + scraper baru + unduhan + tema kaca
+// Regresi akhir: login, katalog, detail, playback, dan unduhan
 const puppeteer = require('puppeteer');
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const B = 'http://127.0.0.1:3000';
@@ -24,16 +24,17 @@ const B = 'http://127.0.0.1:3000';
 
   // beranda
   await p.evaluate(() => (location.hash = '#/home'));
-  // beranda bisa lambat kalau layanan metadata sedang lelet: tunggu sampai kartu akun muncul
-  for (let i = 0; i < 40; i++) {
-    const ada = await p.evaluate(() => !!document.querySelector('.acc-card'));
+  // beranda menunggu katalog render (tanpa widget sosial).
+  for (let i = 0; i < 25; i++) {
+    const ada = await p.evaluate(() => !!document.querySelector('.release-card'));
     if (ada) break;
-    await wait(2000);
+    await wait(1000);
   }
   console.log('2) BERANDA:', JSON.stringify(await p.evaluate(() => ({
-    misi: !!document.querySelector('.mission'), tv: /\bTV\b/.test(document.body.innerText),
-    urutan: [...document.querySelectorAll('.section-head h2')].map((h) => h.textContent.trim()),
-    kacaAkun: getComputedStyle(document.querySelector('.acc-card')).backdropFilter,
+    heading: document.querySelector('.release-heading h1')?.textContent.trim(),
+    cards: document.querySelectorAll('.release-card').length,
+    tanpaChat: !/Global Chat|TOP NAKAMA|Rekomendasi Anime/.test(document.body.innerText),
+    tabs: [...document.querySelectorAll('.catalog-tab')].map((x) => x.textContent.trim()),
   }))));
 
   // one piece

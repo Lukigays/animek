@@ -13,7 +13,7 @@ const kusonime = require('./src/sources/kusonime');
 const app = express();
 // Penanda rilis: dipakai untuk memastikan berkas frontend (app.js/glass.css)
 // tidak tersangkut di cache browser/Vercel setelah deploy baru.
-const BUILD = process.env.BUILD_ID || 'r10-2026-10-18';
+const BUILD = process.env.BUILD_ID || 'r11-2026-10-18';
 app.use(express.json({ limit: '32kb' }));
 app.use(express.urlencoded({ extended: false, limit: '32kb' }));
 
@@ -368,7 +368,8 @@ app.post('/api/me/checkin', async (req, res) => {
 /* ------------------------------- komentar --------------------------------- */
 app.get('/api/comments', async (req, res) => {
   const key = cleanKey(req.query.key);
-  try {
+  if (key === 'global') return res.status(404).json({ ok: false, error: 'Global chat sudah dihapus' });
+  try { 
     const items = (await store.listComments(key)) || [];
     let users = {};
     try {
@@ -438,6 +439,7 @@ app.delete('/api/subs', async (req, res) => {
 
 app.post('/api/comments', async (req, res) => {
   const key = cleanKey(req.body?.key);
+  if (key === 'global') return res.status(404).json({ ok: false, error: 'Global chat sudah dihapus' });
   const text = String(req.body?.text || '');
   const parentId = String(req.body?.parentId || '').slice(0, 40) || null;
   const user = await userFromReq(req);
@@ -609,16 +611,6 @@ app.post('/api/clan/leave', async (req, res) => {
   res.json({ ok: true });
 });
 
-/* ------------------------------ papan peringkat ---------------------------- */
-app.get('/api/leaderboard', async (req, res) => {
-  try {
-    const users = await store.topUsers(20);
-    res.json({ ok: true, items: (users || []).map((u) => publicUser(u)) });
-  } catch {
-    res.json({ ok: true, items: [] });
-  }
-});
-
 /* --------------------------------- token --------------------------------- */
 // Semua URL sumber disembunyikan di balik token terenkripsi (browser hanya tahu token).
 // Token dulu disimpan di memori 12 jam → sering "episode tidak valid/kedaluwarsa"
@@ -719,39 +711,6 @@ const sendError = (res, err, fallback = 'Terjadi kesalahan') => {
 
 app.get('/api/status', async (req, res) => {
   res.json({ ok: true, cache: cache.store.size, tokens: tokens.store.size, time: Date.now() });
-});
-
-/* ---------------------------------- home --------------------------------- */
-
-app.get('/api/home', async (req, res) => {
-  // beranda disimpan 2 menit di server: kunjungan berikutnya langsung tampil
-  const kunciHome = 'home:sources:v3';
-  const tersimpan = cache.get(kunciHome);
-  if (tersimpan && !req.query.segar) return res.json(tersimpan);
-
-  const [latest, airing, popular, movies, genres] = await Promise.allSettled([
-    denganBatas(gabungDariSumber('latest', {}).then((r) => sanitize(r)), 15000, []),
-    // hasil terakhir yang pernah berhasil disimpan → beranda tidak pernah kosong
-    denganBatas(denganCadangan('meta:airing', () => meta.top({ type: 'airing', limit: 12 })), 12000, { items: [] }),
-    denganBatas(denganCadangan('meta:populer', () => meta.top({ filter: 'bypopularity', limit: 12 })), 12000, { items: [] }),
-    denganBatas(denganCadangan('meta:film', () => meta.top({ type: 'movie', filter: 'bypopularity', limit: 12 })), 12000, { items: [] }),
-    denganBatas(denganCadangan('meta:genre', () => meta.genres()), 12000, []),
-  ]);
-  const isiHome = deepClean({
-    ok: true,
-    latest: latest.status === 'fulfilled' ? latest.value : [],
-    airing: airing.status === 'fulfilled' ? airing.value.items || [] : [],
-    popular: popular.status === 'fulfilled' ? popular.value.items || [] : [],
-    movies: movies.status === 'fulfilled' ? movies.value.items || [] : [],
-    genres: genres.status === 'fulfilled' ? genres.value.items || [] : [],
-    provider: airing.status === 'fulfilled' ? airing.value._provider : null,
-    errors: {
-      latest: latest.status === 'rejected' ? String(latest.reason?.message || latest.reason).slice(0, 200) : null,
-      meta: airing.status === 'rejected' ? String(airing.reason?.message || airing.reason).slice(0, 200) : null,
-    },
-  });
-  cache.set(kunciHome, isiHome, 2 * 60 * 1000);
-  res.json(isiHome);
 });
 
 app.get('/api/catalog', async (req, res) => {

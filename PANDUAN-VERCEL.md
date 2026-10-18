@@ -144,7 +144,7 @@ Buka alamat ini di browser (ganti domain-nya):
 |---|---|
 | `/api/config` | `{"ok":true,"googleClientId":"1234….apps.googleusercontent.com","backend":"mongodb","demo":false}` |
 | `/api/me` | `{"ok":true,"user":null,"backend":"mongodb","google":true}` |
-| `/api/leaderboard` | `{"ok":true,"items":[]}` (kosong dulu, normal) |
+| `/api/latest?page=1` | katalog terbaru dari sumber aktif |
 
 Lalu buka halaman **Profil**: tombol **"Lanjutkan dengan Google"** harus muncul. Setelah login,
 header menampilkan nama + gelar + `Lvl. X` + bar EXP, dan menu **Clan** bisa dipakai.
